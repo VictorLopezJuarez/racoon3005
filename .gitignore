@@ -1,0 +1,10 @@
+# Ignore virtual environment
+env28may/
+
+# Ignore other common files and directories
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+.env
