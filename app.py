@@ -1,5 +1,9 @@
+import os
 import streamlit as st
 from langchain_helper import get_qa_chain, create_vector_db
+
+# Set the environment variable for Google Cloud credentials using Streamlit secrets
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = st.secrets["google_application_credentials"]
 
 st.title("EMILDAI CHATBOT")
 
