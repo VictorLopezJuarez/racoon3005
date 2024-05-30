@@ -1,44 +1,35 @@
 import os
-import json
 import streamlit as st
+from google.cloud import aiplatform
+from google.oauth2 import service_account
+import json
+from langchain.chains import RetrievalQA
+from langchain.llms import VertexAI
 
-from langchain_helper import get_qa_chain, create_vector_db
+# Load JSON credentials from Streamlit secrets
+credentials_info = st.secrets["google_application_credentials"]
+credentials_dict = json.loads(credentials_info)
 
-# Retrieve the Google Cloud credentials from Streamlit secrets
-google_credentials = st.secrets["google_application_credentials"]
-
-# Define the path to save the credentials file
-credentials_path = "/tmp/google_application_credentials.json"
-
-# Write the credentials to the file
-with open(credentials_path, "w") as file:
-    json.dump(google_credentials, file)
+# Write the JSON credentials to a file
+with open("gcp_credentials.json", "w") as f:
+    json.dump(credentials_dict, f)
 
 # Set the environment variable to the path of the credentials file
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "gcp_credentials.json"
 
-st.title("EMILDAI CHATBOT")
+# Initialize the Vertex AI client
+client = aiplatform.gapic.PredictionServiceClient(
+    credentials=service_account.Credentials.from_service_account_file("gcp_credentials.json")
+)
 
-# Function to update the knowledge base
-def update_kb():
-    create_vector_db()
-    st.write("Knowledge base updated!")
-
-# Button to update the knowledge base
-if st.button("Update the Knowledge base"):
-    update_kb()
-
-# Text input for the question
-question = st.text_input("Question: ")
-
-# Function to get the response and display it
+# Define the retrieval function
 def get_and_display_response(question):
-    chain = get_qa_chain()
+    chain = RetrievalQA.from_chain_type(llm=VertexAI(model="text-bison@001"), chain_type="stuff")
     response = chain(question)
+    st.write(response)
 
-    st.write(response["result"])
-
-# Button to submit the question
-if st.button("Submit"):
-    if question:
-        get_and_display_response(question)
+# Streamlit app
+st.title("AI Chatbot")
+question = st.text_input("Ask a question:")
+if question:
+    get_and_display_response(question)
