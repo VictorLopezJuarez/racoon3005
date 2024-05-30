@@ -1,9 +1,18 @@
 import os
 import streamlit as st
+import json
+
 from langchain_helper import get_qa_chain, create_vector_db
 
-# Set the environment variable for Google Cloud credentials using Streamlit secrets
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = st.secrets["google_application_credentials"]
+# Write the JSON credentials to a file
+credentials_json = st.secrets["google_application_credentials"]
+credentials_path = "/tmp/google_application_credentials.json"
+
+with open(credentials_path, "w") as f:
+    json.dump(credentials_json, f)
+
+# Set the environment variable to the path of the credentials file
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
 st.title("EMILDAI CHATBOT")
 
@@ -24,7 +33,6 @@ def get_and_display_response(question):
     chain = get_qa_chain()
     response = chain(question)
 
-    #st.header("Answer")
     st.write(response["result"])
 
 # Button to submit the question
