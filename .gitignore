@@ -1,5 +1,5 @@
 # Ignore virtual environment
-env28may/
+env30/
 
 # Ignore other common files and directories
 __pycache__/
