@@ -1,0 +1,15 @@
+echo "env30/" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+echo ".DS_Store" >> .gitignore
+echo ".vscode/" >> .gitignore
+echo ".idea/" >> .gitignore
+echo ".env" >> .gitignore
+
+env30/
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/
+.env
